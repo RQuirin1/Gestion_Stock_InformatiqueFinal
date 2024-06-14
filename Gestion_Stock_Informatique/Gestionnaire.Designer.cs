@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GestionStock));
             buttonAjout = new Button();
             ajoutGroupBox = new GroupBox();
             textBoxCommentaire = new TextBox();
@@ -155,6 +156,7 @@
             saveChangesButton = new Button();
             buttonBackUp = new Button();
             label_info_save = new Label();
+            pictureBox1 = new PictureBox();
             ajoutGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownQuant).BeginInit();
             modif_groupBox.SuspendLayout();
@@ -165,6 +167,7 @@
             ((System.ComponentModel.ISupportInitialize)origine_Grille).BeginInit();
             ((System.ComponentModel.ISupportInitialize)origineBindingSource).BeginInit();
             modifPrix_groupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // buttonAjout
@@ -1018,7 +1021,6 @@
             Materiel_grille.Size = new Size(1114, 392);
             Materiel_grille.TabIndex = 26;
             Materiel_grille.CellClick += Materiel_grille_CellClick;
-            Materiel_grille.CellContentClick += Materiel_grille_CellContentClick;
             // 
             // idDataGridViewTextBoxColumn
             // 
@@ -1376,12 +1378,23 @@
             label_info_save.Size = new Size(0, 25);
             label_info_save.TabIndex = 36;
             // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(1610, 649);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(259, 114);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 37;
+            pictureBox1.TabStop = false;
+            // 
             // GestionStock
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DarkGray;
             ClientSize = new Size(1881, 825);
+            Controls.Add(pictureBox1);
             Controls.Add(label_info_save);
             Controls.Add(buttonBackUp);
             Controls.Add(saveChangesButton);
@@ -1431,6 +1444,7 @@
             ((System.ComponentModel.ISupportInitialize)origineBindingSource).EndInit();
             modifPrix_groupBox.ResumeLayout(false);
             modifPrix_groupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1562,5 +1576,6 @@
         private Button saveChangesButton;
         private Button buttonBackUp;
         private Label label_info_save;
+        private PictureBox pictureBox1;
     }
 }

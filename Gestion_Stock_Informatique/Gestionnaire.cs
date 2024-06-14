@@ -1065,10 +1065,5 @@ namespace Gestion_Stock_Informatique
                 }
             }
         }
-
-        private void Materiel_grille_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
     }
 }
