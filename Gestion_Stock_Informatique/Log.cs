@@ -28,6 +28,9 @@ namespace Gestion_Stock_Informatique
             {
                 GestionStock gest = new GestionStock();
                 gest.ShowDialog();
+                
+                textBoxLog.Text = "";
+                textBoxMdp.Text = "";
             }
             else
             {

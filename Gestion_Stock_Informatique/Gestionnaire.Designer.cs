@@ -157,6 +157,8 @@
             buttonBackUp = new Button();
             label_info_save = new Label();
             pictureBox1 = new PictureBox();
+            timerSession = new System.Windows.Forms.Timer(components);
+            button_Disconnect = new Button();
             ajoutGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownQuant).BeginInit();
             modif_groupBox.SuspendLayout();
@@ -997,7 +999,7 @@
             buttonExport.Name = "buttonExport";
             buttonExport.Size = new Size(112, 34);
             buttonExport.TabIndex = 24;
-            buttonExport.Text = "Exporter (Excel)";
+            buttonExport.Text = "Exporter";
             buttonExport.UseVisualStyleBackColor = false;
             buttonExport.Click += buttonExport_Click;
             // 
@@ -1388,12 +1390,28 @@
             pictureBox1.TabIndex = 37;
             pictureBox1.TabStop = false;
             // 
+            // timerSession
+            // 
+            timerSession.Interval = 900000;
+            timerSession.Tick += timerSession_Tick;
+            // 
+            // button_Disconnect
+            // 
+            button_Disconnect.Location = new Point(12, 784);
+            button_Disconnect.Name = "button_Disconnect";
+            button_Disconnect.Size = new Size(124, 34);
+            button_Disconnect.TabIndex = 38;
+            button_Disconnect.Text = "Déconnexion";
+            button_Disconnect.UseVisualStyleBackColor = true;
+            button_Disconnect.Click += button_Disconnect_Click;
+            // 
             // GestionStock
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DarkGray;
-            ClientSize = new Size(1881, 825);
+            ClientSize = new Size(1881, 830);
+            Controls.Add(button_Disconnect);
             Controls.Add(pictureBox1);
             Controls.Add(label_info_save);
             Controls.Add(buttonBackUp);
@@ -1424,11 +1442,11 @@
             Controls.Add(validButton);
             Controls.Add(ajoutGroupBox);
             Controls.Add(buttonAjout);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "GestionStock";
             Text = "Gestionnaire de Stock";
             FormClosing += GestionStock_FormClosing;
             Load += GestionStock_Load;
+            SizeChanged += GestionStock_SizeChanged;
             ajoutGroupBox.ResumeLayout(false);
             ajoutGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownQuant).EndInit();
@@ -1577,5 +1595,7 @@
         private Button buttonBackUp;
         private Label label_info_save;
         private PictureBox pictureBox1;
+        private System.Windows.Forms.Timer timerSession;
+        private Button button_Disconnect;
     }
 }

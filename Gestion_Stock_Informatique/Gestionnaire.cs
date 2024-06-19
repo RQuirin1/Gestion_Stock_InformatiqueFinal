@@ -7,23 +7,50 @@ using System.Linq;
 using System.Windows.Forms;
 using DocumentFormat.OpenXml.InkML;
 using System.Diagnostics;
+using System;
+using System.Drawing;
+using Control = System.Windows.Forms.Control;
+using Color = System.Drawing.Color;
+
 
 
 namespace Gestion_Stock_Informatique
 {
     public partial class GestionStock : Form
     {
+
+
+        private Dictionary<Control, Rectangle>? initialControlBounds = new Dictionary<Control, Rectangle>();
+        private Size initialFormSize;
+
+        private bool verif;
+
         StockInformatiqueContext BDD_Stock;
+
+
+
         public GestionStock()
         {
             InitializeComponent();
+
         }
 
 
 
         private void GestionStock_Load(object sender, EventArgs e)
         {
+
             BDD_Stock = new StockInformatiqueContext();
+
+
+            if ((this != null) && (initialControlBounds != null))
+            {
+                initialFormSize = this.ClientSize;
+                SaveInitialBounds(this);
+            }
+
+
+
 
             if (BDD_Stock.Database.CanConnect())
             {
@@ -84,8 +111,48 @@ namespace Gestion_Stock_Informatique
             {
                 MessageBox.Show($"Erreur lors du chargement de l'heure du dernier clic : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        private void GestionStock_SizeChanged(object sender, EventArgs e)
+        {
+            ApplyAutoScale(this);
+        }
 
+        private void SaveInitialBounds(Control parent)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                initialControlBounds[control] = control.Bounds;
+                if (control.HasChildren)
+                {
+                    SaveInitialBounds(control);
+                }
+            }
+        }
 
+        private void ApplyAutoScale(Control parent)
+        {
+            float scaleFactorWidth = (float)this.ClientSize.Width / initialFormSize.Width;
+            float scaleFactorHeight = (float)this.ClientSize.Height / initialFormSize.Height;
+
+            foreach (Control control in parent.Controls)
+            {
+                if (initialControlBounds.ContainsKey(control))
+                {
+                    Rectangle initialBounds = initialControlBounds[control];
+
+                    control.Bounds = new Rectangle(
+                        (int)(initialBounds.X * scaleFactorWidth),
+                        (int)(initialBounds.Y * scaleFactorHeight),
+                        (int)(initialBounds.Width * scaleFactorWidth),
+                        (int)(initialBounds.Height * scaleFactorHeight)
+                    );
+
+                    if (control.HasChildren)
+                    {
+                        ApplyAutoScale(control);
+                    }
+                }
+            }
         }
 
         private void buttonAjout_Click(object sender, EventArgs e)
@@ -273,7 +340,6 @@ namespace Gestion_Stock_Informatique
             labelSelect_result.Text = Materiel_grille.RowCount.ToString();
         }
 
-
         private void Materiel_grille_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             buttonAjout.Visible = false;
@@ -313,7 +379,25 @@ namespace Gestion_Stock_Informatique
         private void GestionStock_FormClosing(object sender, FormClosingEventArgs e)
         {
             BDD_Stock.SaveChanges();
-            Application.Exit();
+
+            if (!verif)
+            {
+                DialogResult dr = MessageBox.Show("Quitter le logiciel ?" +
+                " Appuyer sur Oui pour quitter le logiciel, Non pour se déconnecter", "Confirmation", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (dr == DialogResult.Yes)
+                {
+                    Environment.Exit(0);
+                }
+                else if (dr == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
+            
+
+            
+            
         }
 
         private void suppButton_Click(object sender, EventArgs e)
@@ -323,16 +407,25 @@ namespace Gestion_Stock_Informatique
 
             suppButton.Visible = false;
             suppButton.Enabled = false;
+            DialogResult dr = MessageBox.Show("Confirmer la suppression ?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
-            if (this.BDD_Stock != null)
+            if (dr == DialogResult.OK)
             {
-                var materiel = (Materiel)this.Materiel_grille.CurrentRow.DataBoundItem;
-                if (materiel != null)
+                if (this.BDD_Stock != null)
                 {
-                    BDD_Stock.Remove(materiel);
-                }
+                    var materiel = (Materiel)this.Materiel_grille.CurrentRow.DataBoundItem;
+                    if (materiel != null)
+                    {
+                        BDD_Stock.Remove(materiel);
+                    }
 
+                }
             }
+            else
+            {
+                MessageBox.Show("Suppression annulée", "Annulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
             labelTot_Result.Text = Materiel_grille.RowCount.ToString();
             labelSelect_result.Text = Materiel_grille.RowCount.ToString();
         }
@@ -409,7 +502,6 @@ namespace Gestion_Stock_Informatique
             }
             labelSelect_result.Text = Materiel_grille.RowCount.ToString();
         }
-
 
         private void cancelButton_select_Click(object sender, EventArgs e)
         {
@@ -584,7 +676,6 @@ namespace Gestion_Stock_Informatique
             labelSelect_result.Text = Materiel_grille.RowCount.ToString();
         }
 
-
         private void select_comboBox_Rangement_SelectedIndexChanged(object sender, EventArgs e)
         {
             select_comboBox_Commentaire.DataSource = BDD_Stock.Materiels
@@ -631,7 +722,6 @@ namespace Gestion_Stock_Informatique
             buttonAjout_Prix.Enabled = false;
         }
 
-
         private void validButton_Prix_Click(object sender, EventArgs e)
         {
             decimal prixHT;
@@ -665,7 +755,6 @@ namespace Gestion_Stock_Informatique
                 labelErreur.Text = "Mauvais format de texte";
             }
         }
-
 
         private void verifNotNull_prix()
         {
@@ -800,6 +889,8 @@ namespace Gestion_Stock_Informatique
 
                 workbook.SaveAs(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Excel_Stock_Info.xlsx"));
             }
+
+            MessageBox.Show("Tableau créé sur votre bureau", "Exportation réussie", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
         }
@@ -1063,6 +1154,23 @@ namespace Gestion_Stock_Informatique
                 {
                     MessageBox.Show($"Une erreur est survenue : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+        }
+
+        private void timerSession_Tick(object sender, EventArgs e)
+        {
+            timerSession.Stop();
+
+            this.Close();
+        }
+        private void button_Disconnect_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("Se déconnecter ?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+
+            if(dr == DialogResult.OK)
+            { 
+                verif = true;
+                this.Close();
             }
         }
     }
