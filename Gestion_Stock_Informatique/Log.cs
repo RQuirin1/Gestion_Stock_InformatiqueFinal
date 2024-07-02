@@ -31,6 +31,7 @@ namespace Gestion_Stock_Informatique
                 
                 textBoxLog.Text = "";
                 textBoxMdp.Text = "";
+                textBoxLog.Select();
             }
             else
             {

@@ -1444,6 +1444,7 @@
             Controls.Add(buttonAjout);
             Name = "GestionStock";
             Text = "Gestionnaire de Stock";
+            Activated += GestionStock_Activated;
             FormClosing += GestionStock_FormClosing;
             Load += GestionStock_Load;
             SizeChanged += GestionStock_SizeChanged;

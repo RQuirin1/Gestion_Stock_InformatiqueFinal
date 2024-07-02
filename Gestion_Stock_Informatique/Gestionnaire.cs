@@ -42,6 +42,8 @@ namespace Gestion_Stock_Informatique
 
             BDD_Stock = new StockInformatiqueContext();
 
+            timerSession.Start();
+
 
             if ((this != null) && (initialControlBounds != null))
             {
@@ -394,10 +396,10 @@ namespace Gestion_Stock_Informatique
                     e.Cancel = true;
                 }
             }
-            
 
-            
-            
+
+
+
         }
 
         private void suppButton_Click(object sender, EventArgs e)
@@ -926,10 +928,7 @@ namespace Gestion_Stock_Informatique
                 !String.IsNullOrEmpty(modif_textBoxMarque.Text) &&
                 !String.IsNullOrEmpty(modif_textBoxCaract.Text) &&
                 !String.IsNullOrEmpty(modif_textBoxModele.Text) &&
-                !String.IsNullOrEmpty(modif_comboBoxEtat.Text) &&
-                !String.IsNullOrEmpty(modif_textBoxDestination.Text) &&
-                !String.IsNullOrEmpty(modif_textBoxRangement.Text) &&
-                !String.IsNullOrEmpty(modif_textBoxComm.Text))
+                !String.IsNullOrEmpty(modif_comboBoxEtat.Text))
             {
                 modif_buttonValid.Visible = true;
             }
@@ -946,18 +945,17 @@ namespace Gestion_Stock_Informatique
 
             if (product != null)
             {
-                product.Produit = modif_comboBoxProduit.Text;
-                product.Type = modif_textBoxType.Text;
-                product.Marque = modif_textBoxMarque.Text;
-                product.Caracteristique = modif_textBoxCaract.Text;
-                product.Modele = modif_textBoxModele.Text;
-                product.Etat = modif_comboBoxEtat.Text;
-                product.Destination = modif_textBoxDestination.Text;
-                product.Rangement = modif_textBoxRangement.Text;
-                product.Commentaire = modif_textBoxComm.Text;
+                product.Produit = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_comboBoxProduit.Text);
+                product.Type = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_textBoxType.Text);
+                product.Marque = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_textBoxMarque.Text);
+                product.Caracteristique = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_textBoxCaract.Text);
+                product.Modele = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_textBoxModele.Text);
+                product.Etat = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_comboBoxEtat.Text);
+                product.Destination = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_textBoxDestination.Text);
+                product.Rangement = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_textBoxRangement.Text);
+                product.Commentaire = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modif_textBoxComm.Text);
 
-                BDD_Stock.SaveChanges();
-
+                
                 modif_comboBoxProduit.Text = "";
                 modif_textBoxType.Text = "";
                 modif_textBoxMarque.Text = "";
@@ -970,6 +968,7 @@ namespace Gestion_Stock_Informatique
 
 
             }
+            BDD_Stock.SaveChanges();
             modif_groupBox.Visible = false;
             modif_groupBox.Enabled = false;
 
@@ -1161,16 +1160,30 @@ namespace Gestion_Stock_Informatique
         {
             timerSession.Stop();
 
+
+            verif = true;
             this.Close();
         }
         private void button_Disconnect_Click(object sender, EventArgs e)
         {
             DialogResult dr = MessageBox.Show("Se déconnecter ?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 
-            if(dr == DialogResult.OK)
-            { 
+            if (dr == DialogResult.OK)
+            {
                 verif = true;
                 this.Close();
+            }
+        }
+
+        private void GestionStock_Activated(object sender, EventArgs e)
+        {
+            if (!timerSession.Enabled)
+            {
+                timerSession.Start();
+            }
+            else
+            {
+                timerSession.Stop();
             }
         }
     }
